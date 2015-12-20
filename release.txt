@@ -1,0 +1,4 @@
+1. Change version number in setup.py
+2. Upload to github
+3. python setup.py sdist
+4. twine upload dist/*
