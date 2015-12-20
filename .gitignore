@@ -2,6 +2,8 @@
 __pycache__/
 *.py[cod]
 
+# rsw.egg-info
+
 # C extensions
 *.so
 
