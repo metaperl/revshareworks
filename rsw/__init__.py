@@ -37,6 +37,11 @@ def config_file():
         return create_ini_file(ini_file)
 
 
+def upgrade():
+    import subprocess
+    subprocess.call("pip install --upgrade rsw")
+
+
 def main(section='login', buy=True, autoclose=False):
     config = ConfigParser.ConfigParser()
     config.read(config_file())
