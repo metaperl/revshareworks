@@ -194,13 +194,14 @@ class Entry(object):
 
         link_elem = wait_visible(self.browser.driver, "//input[@value='Skip ad >>']", timeout=15)
         if link_elem:
-            logging.info("Skip ad found.")
+            logging.info("Skip ad found. Clicking.")
             link_elem.click()
         else:
             logging.info("Logging in again.")
             self.login()
 
         logging.info("Login complete.")
+
 
     def browser_visit(self, action_label):
         try:
@@ -274,9 +275,18 @@ class Entry(object):
     def packs_to_purchase(bread, pack_value):
         return int(math.floor(bread/pack_value))
 
+    def click_elem_by_text(self, t):
+        xpath = "//*[text()='{0}']".format(t)
+        logging.info("Waiting for element with xpath {0}".format(xpath))
+        link = wait_visible(self.browser.driver, xpath, by=By.XPATH)
+        link.click()
+
+
     def get_balance(self):
 
-        self.browser_visit('wallet')
+        self.click_elem_by_text('Dashboard')
+        self.click_elem_by_text('My Wallet')
+        self.click_elem_by_text('Wallet Balance')
 
         loop_forever()
 
@@ -299,14 +309,8 @@ class Entry(object):
         pp.pprint(self._balance)
 
     def exhaustive_buy(self):
-        pack_values = [1, 10, 100, 1000]
-        pack_values.reverse()
-        for pack_value in pack_values:
-            self.buy_pack(pack_value)
 
-    def buy_pack(self, pack_value):
-
-        balance = self.get_balance()
+        self.click_elem_by_text('Buy Adshares')
 
         loop_forever()
 
