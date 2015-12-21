@@ -92,7 +92,8 @@ def page_source(browser):
     document_root = browser.driver.page_source
     return document_root
 
-def wait_visible(driver, locator, by=By.XPATH, timeout=30):
+
+def wait_visible(driver, locator, by=By.XPATH, timeout=60):
     """
 
     :param driver:
@@ -101,6 +102,9 @@ def wait_visible(driver, locator, by=By.XPATH, timeout=30):
     :param timeout:
     :return:
     """
+
+    logging.info("Waiting for {0} to be visible".format(locator))
+
     try:
         if ui.WebDriverWait(driver, timeout).until(EC.visibility_of_element_located((by, locator))):
             logging.info("Found element.")
@@ -312,10 +316,23 @@ class Entry(object):
 
         self.click_elem_by_text('Buy Adshares')
 
-        loop_forever()
+        plan_xpath = "//table[@class='table_2']/tbody"
 
-        link_elem = wait_visible(self.browser.driver, "//a[@title='Buy Adshares']", timeout=15)
-        link_elem.click()
+        wait_visible(self.browser.driver, plan_xpath)
+
+        purchase_plans = self.browser.find_by_xpath(plan_xpath)
+        purchase_plans.reverse()
+        for i, pack_value in enumerate((1000, 100, 10, 1)):
+            # logging.info("Pack value = ${0}\n================".format(pack_value))
+            plan_elem = purchase_plans[i]
+            options = plan_elem.find_by_xpath("//select[@id='pro_4']/option")[1:]
+            for option in options:
+                processor, dollars = option.text.split(" - $")
+                dollars = int(dollars)
+                packs_to_buy = dollars / pack_value
+                logging.info("Can buy {0} {1} packs with ${2} {3}".format(packs_to_buy, pack_value, dollars, processor))
+                # print(option.text)
+
         loop_forever()
 
 
