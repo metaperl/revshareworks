@@ -192,13 +192,13 @@ class Entry(object):
 
         logging.info("Waiting for login ad...")
 
-        link_elem = wait_visible(self.browser.driver, "//input[@value='Skip ad >>']", timeout=15)
+        link_elem = wait_visible(self.browser.driver, "//input[@value='Skip ad >>']")
         if link_elem:
             logging.info("Skip ad found. Clicking.")
             link_elem.click()
         else:
             logging.info("Logging in again.")
-            self.login()
+            return self.login()
 
         logging.info("Login complete.")
 
@@ -313,8 +313,6 @@ class Entry(object):
         self.click_elem_by_text('Buy Adshares')
 
         loop_forever()
-
-        self.browser_visit('buy_pack')
 
         link_elem = wait_visible(self.browser.driver, "//a[@title='Buy Adshares']", timeout=15)
         link_elem.click()
