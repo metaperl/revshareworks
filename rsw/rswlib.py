@@ -325,16 +325,29 @@ class Entry(object):
         for i, pack_value in enumerate((1000, 100, 10, 1)):
             # logging.info("Pack value = ${0}\n================".format(pack_value))
             plan_elem = purchase_plans[i]
-            options = plan_elem.find_by_xpath("//select[@id='pro_4']/option")[1:]
+            reverse_index = 4 - i
+            option_xpath = "//select[@id='pro_{0}']/option".format(
+                reverse_index
+            )
+            options = plan_elem.find_by_xpath(option_xpath)[1:]
             for option in options:
                 processor, dollars = option.text.split(" - $")
                 dollars = int(dollars)
                 packs_to_buy = dollars / pack_value
-                logging.info("Can buy {0} {1} packs with ${2} {3}".format(packs_to_buy, pack_value, dollars, processor))
+                logging.info("Can buy {0} ${1}-packs with ${2} {3}".format(packs_to_buy, pack_value, dollars, processor))
                 # print(option.text)
+                if packs_to_buy >= 1:
+                    plan_elem.find_by_xpath("//input[@id='qty_{0}']".format(reverse_index)).type(str(packs_to_buy))
+                    self.browser.select(
+                        "processor[{0}]".format(reverse_index),
+                        option.value
+                    )
+                    self.browser.find_by_xpath("//a[@onclick='buy_shares({0})']".format(reverse_index)).first.click()
+                    maybe_accept_alert(self.browser.driver)
+                    pass
+
 
         loop_forever()
-
 
         total_balance = self._balance['cash'] + self._balance['repurchase']
 
@@ -342,30 +355,8 @@ class Entry(object):
 
         logging.info("Buying {0} packs of value {1}".format(packs_to_buy, pack_value))
 
-        pack_value_to_index = {
-            1: 0,
-            3: 1,
-            5: 2,
-            7: 3,
-            10: 4,
-            15: 5,
-            20: 6,
-            30: 7,
-            40: 8,
-            50: 9,
-        }
 
-        if packs_to_buy < 1:
-            return
 
-        buy_form = self.browser.find_by_xpath("//form[@method='post']")
-        form = buy_form[pack_value_to_index[pack_value]]
-        pack_input = "{0}\t\t ".format(packs_to_buy)
-        form.find_by_id('position').type(pack_input)
-        button = wait_visible(self.browser.driver, 'paynow', By.ID)
-        if button:
-            button.click()
-#        self.browser.find_by_id('paynow').first.click()
 
     def calc_account_balance(self):
         time.sleep(1)
