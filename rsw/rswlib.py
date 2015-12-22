@@ -312,8 +312,7 @@ class Entry(object):
         pp = pprint.PrettyPrinter(indent=4)
         pp.pprint(self._balance)
 
-    def exhaustive_buy(self):
-
+    def refresh_purchase_plans(self):
         self.click_elem_by_text('Buy Adshares')
 
         plan_xpath = "//table[@class='table_2']/tbody"
@@ -322,6 +321,10 @@ class Entry(object):
 
         purchase_plans = self.browser.find_by_xpath(plan_xpath)
         purchase_plans.reverse()
+        return purchase_plans
+
+    def exhaustive_buy(self):
+        purchase_plans = self.refresh_purchase_plans()
         for i, pack_value in enumerate((1000, 100, 10, 1)):
             # logging.info("Pack value = ${0}\n================".format(pack_value))
             plan_elem = purchase_plans[i]
@@ -344,7 +347,7 @@ class Entry(object):
                     )
                     self.browser.find_by_xpath("//a[@onclick='buy_shares({0})']".format(reverse_index)).first.click()
                     maybe_accept_alert(self.browser.driver)
-                    pass
+                    self.exhaustive_buy()
 
 
         loop_forever()

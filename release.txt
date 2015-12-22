@@ -1,4 +1,4 @@
-1. Change version number in setup.py
+1. Change version number in rsw/version.py
 2. Upload to github
 3. python setup.py sdist
 4. twine upload dist/*

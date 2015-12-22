@@ -7,7 +7,9 @@ import argh
 from splinter import Browser
 
 # local
+from version import __version__
 import rswlib
+
 
 def create_ini_file(i):
     config = ConfigParser.ConfigParser()
@@ -60,8 +62,9 @@ def main(section='login', buy=True, autoclose=False):
             e.exhaustive_buy()
 
         if not autoclose:
-            loop_forever()
+            rswlib.loop_forever()
 
 
 if __name__ == '__main__':
+    print("RevShareWorks! Version {0}".format(__version__))
     argh.dispatch_command(main)
